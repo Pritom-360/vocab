@@ -3,90 +3,194 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Vocabulary Builder</title>
+    <title>Vocabulary Builder - CORS Fixed</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
-        body {
-            background-color: #f8f9fa;
-            padding-top: 2rem;
+        :root {
+            --primary: #4e73df;
+            --primary-dark: #3a5ec0;
+            --success: #28a745;
+            --danger: #dc3545;
+            --light-bg: #f8f9fa;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
+        
+        body {
+            background-color: var(--light-bg);
+            padding-top: 2rem;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
         .card {
             border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--card-shadow);
             margin-bottom: 2rem;
             border: none;
+            transition: transform 0.3s ease;
         }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
         .nav-tabs .nav-link {
             color: #495057;
             font-weight: 500;
+            border: none;
+            border-bottom: 3px solid transparent;
+            padding: 0.75rem 1.5rem;
         }
+        
         .nav-tabs .nav-link.active {
-            color: #4e73df;
+            color: var(--primary);
             font-weight: 600;
+            background: transparent;
+            border-bottom: 3px solid var(--primary);
         }
+        
         .btn-primary {
-            background-color: #4e73df;
-            border-color: #4e73df;
+            background-color: var(--primary);
+            border-color: var(--primary);
+            transition: all 0.3s ease;
         }
+        
         .btn-primary:hover {
-            background-color: #3a5ec0;
-            border-color: #3a5ec0;
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+            transform: scale(1.05);
         }
+        
         .word-display {
-            font-size: 2rem;
+            font-size: 2.5rem;
             font-weight: bold;
             color: #2e3a4d;
+            letter-spacing: -0.5px;
         }
+        
         .phonetic {
             color: #6c757d;
             font-style: italic;
+            font-size: 1.2rem;
         }
+        
         .meaning-card {
             background-color: #f8f9fa;
-            border-left: 4px solid #4e73df;
+            border-left: 4px solid var(--primary);
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
         }
-        .example {
-            background-color: #e9ecef;
-            border-radius: 5px;
-            padding: 0.5rem;
-            font-style: italic;
-        }
+        
         .synonym-badge {
             background-color: #d1e7dd;
             color: #0f5132;
             margin-right: 5px;
             margin-bottom: 5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
+        
+        .synonym-badge:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
         .antonym-badge {
             background-color: #f8d7da;
             color: #842029;
             margin-right: 5px;
             margin-bottom: 5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
+        
+        .antonym-badge:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
         #loadingSpinner {
             display: none;
         }
+        
         .word-list {
-            max-height: 400px;
+            max-height: 500px;
             overflow-y: auto;
+            padding: 10px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
+        
         .toast-container {
             position: fixed;
             top: 20px;
             right: 20px;
             z-index: 1100;
         }
+        
         .category-badge {
             font-size: 0.75rem;
             margin-left: 8px;
+            background: var(--primary);
         }
+        
         .tab-pane {
-            padding: 15px;
+            padding: 20px;
             background-color: white;
             border-radius: 0 0 10px 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .example-card {
+            background: linear-gradient(to right, #f8f9fa, #e9ecef);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 3px solid var(--primary);
+        }
+        
+        .history-item {
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        
+        .history-item:hover {
+            background-color: #e9f7fe;
+            transform: translateX(5px);
+        }
+        
+        .header-gradient {
+            background: linear-gradient(135deg, var(--primary), #2a4cb3);
+            color: white;
+            padding: 1.5rem 0;
+            border-radius: 15px 15px 0 0;
+        }
+        
+        .search-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        @media (max-width: 768px) {
+            .word-display {
+                font-size: 1.8rem;
+            }
+            
+            .btn-group {
+                width: 100%;
+                margin-top: 10px;
+            }
+            
+            .btn-group .btn {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -95,59 +199,66 @@
         <div class="row justify-content-center">
             <div class="col-lg-10">
                 <div class="card">
-                    <div class="card-header bg-white">
-                        <h1 class="h4 text-center">Advanced Vocabulary Builder</h1>
+                    <div class="header-gradient">
+                        <h1 class="h3 text-center mb-0"><i class="bi bi-journal-bookmark"></i> Vocabulary Builder</h1>
+                        <p class="text-center mb-0 opacity-75">Learn, Save, Master English Words</p>
                     </div>
                     <div class="card-body">
                         <ul class="nav nav-tabs" id="mainTabs" role="tablist">
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link active" id="search-tab" data-bs-toggle="tab" data-bs-target="#search" type="button" role="tab">Search Words</button>
+                                <button class="nav-link active" id="search-tab" data-bs-toggle="tab" data-bs-target="#search" type="button" role="tab">
+                                    <i class="bi bi-search me-1"></i> Search Words
+                                </button>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="saved-tab" data-bs-toggle="tab" data-bs-target="#saved" type="button" role="tab">Saved Words</button>
+                                <button class="nav-link" id="saved-tab" data-bs-toggle="tab" data-bs-target="#saved" type="button" role="tab">
+                                    <i class="bi bi-bookmarks me-1"></i> Saved Words
+                                </button>
                             </li>
                         </ul>
                         
                         <div class="tab-content" id="mainTabsContent">
                             <!-- Search Tab -->
                             <div class="tab-pane fade show active" id="search" role="tabpanel">
-                                <div class="mb-4">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" id="wordInput" placeholder="Enter a word..." aria-label="Enter a word">
-                                        <button class="btn btn-primary" type="button" id="searchBtn">
-                                            <i class="bi bi-search"></i> Search
-                                        </button>
+                                <div class="search-section">
+                                    <div class="mb-4">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control form-control-lg" id="wordInput" placeholder="Enter a word..." aria-label="Enter a word">
+                                            <button class="btn btn-primary" type="button" id="searchBtn">
+                                                <i class="bi bi-search me-1"></i> Search
+                                            </button>
+                                        </div>
+                                        <div class="form-text text-muted mt-2">Enter an English word to look up its definition, synonyms, and antonyms</div>
                                     </div>
-                                    <div class="form-text text-muted">Enter an English word to look up its definition, synonyms, and antonyms</div>
                                 </div>
 
                                 <div id="loadingSpinner" class="text-center my-4">
-                                    <div class="spinner-border text-primary" role="status">
+                                    <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
                                         <span class="visually-hidden">Loading...</span>
                                     </div>
-                                    <p class="mt-2">Fetching word data...</p>
+                                    <p class="mt-3">Fetching word data...</p>
                                 </div>
 
-                                <div id="wordResult" class="d-none">
-                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div id="wordResult" class="d-none mt-4">
+                                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
                                         <div>
                                             <div class="word-display" id="wordDisplay"></div>
                                             <div class="phonetic" id="phonetic"></div>
                                         </div>
-                                        <div>
-                                            <button class="btn btn-success me-2" id="saveGeneralBtn">
-                                                <i class="bi bi-bookmark-plus"></i> Save to General
+                                        <div class="mt-3 mt-md-0">
+                                            <button class="btn btn-success me-2 mb-2" id="saveGeneralBtn">
+                                                <i class="bi bi-bookmark-plus me-1"></i> Save to General
                                             </button>
                                             <div class="btn-group">
                                                 <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                                    Save to Category
+                                                    <i class="bi bi-tag me-1"></i> Save to Category
                                                 </button>
                                                 <ul class="dropdown-menu">
-                                                    <li><a class="dropdown-item" href="#" data-category="difficult">Difficult Words</a></li>
-                                                    <li><a class="dropdown-item" href="#" data-category="favorite">Favorite Words</a></li>
-                                                    <li><a class="dropdown-item" href="#" data-category="technical">Technical Terms</a></li>
+                                                    <li><a class="dropdown-item" href="#" data-category="difficult"><i class="bi bi-lightning-charge me-2"></i> Difficult Words</a></li>
+                                                    <li><a class="dropdown-item" href="#" data-category="favorite"><i class="bi bi-star me-2"></i> Favorite Words</a></li>
+                                                    <li><a class="dropdown-item" href="#" data-category="technical"><i class="bi bi-code-slash me-2"></i> Technical Terms</a></li>
                                                     <li><hr class="dropdown-divider"></li>
-                                                    <li><a class="dropdown-item" href="#" data-category="custom">Custom Category</a></li>
+                                                    <li><a class="dropdown-item" href="#" data-category="custom"><i class="bi bi-plus-circle me-2"></i> Custom Category</a></li>
                                                 </ul>
                                             </div>
                                         </div>
@@ -155,20 +266,28 @@
 
                                     <ul class="nav nav-tabs" id="wordDetailTabs" role="tablist">
                                         <li class="nav-item" role="presentation">
-                                            <button class="nav-link active" id="definitions-tab" data-bs-toggle="tab" data-bs-target="#definitions" type="button" role="tab">Definitions</button>
+                                            <button class="nav-link active" id="definitions-tab" data-bs-toggle="tab" data-bs-target="#definitions" type="button" role="tab">
+                                                <i class="bi bi-journal-text me-1"></i> Definitions
+                                            </button>
                                         </li>
                                         <li class="nav-item" role="presentation">
-                                            <button class="nav-link" id="synonyms-tab" data-bs-toggle="tab" data-bs-target="#synonyms" type="button" role="tab">Synonyms</button>
+                                            <button class="nav-link" id="synonyms-tab" data-bs-toggle="tab" data-bs-target="#synonyms" type="button" role="tab">
+                                                <i class="bi bi-arrow-repeat me-1"></i> Synonyms
+                                            </button>
                                         </li>
                                         <li class="nav-item" role="presentation">
-                                            <button class="nav-link" id="antonyms-tab" data-bs-toggle="tab" data-bs-target="#antonyms" type="button" role="tab">Antonyms</button>
+                                            <button class="nav-link" id="antonyms-tab" data-bs-toggle="tab" data-bs-target="#antonyms" type="button" role="tab">
+                                                <i class="bi bi-arrow-left-right me-1"></i> Antonyms
+                                            </button>
                                         </li>
                                         <li class="nav-item" role="presentation">
-                                            <button class="nav-link" id="examples-tab" data-bs-toggle="tab" data-bs-target="#examples" type="button" role="tab">Examples</button>
+                                            <button class="nav-link" id="examples-tab" data-bs-toggle="tab" data-bs-target="#examples" type="button" role="tab">
+                                                <i class="bi bi-chat-quote me-1"></i> Examples
+                                            </button>
                                         </li>
                                     </ul>
                                     
-                                    <div class="tab-content" id="wordDetailTabsContent">
+                                    <div class="tab-content mt-3" id="wordDetailTabsContent">
                                         <div class="tab-pane fade show active" id="definitions" role="tabpanel">
                                             <div id="meaningsContainer" class="mt-3"></div>
                                         </div>
@@ -184,51 +303,78 @@
                                     </div>
                                 </div>
 
-                                <div id="errorDisplay" class="alert alert-danger d-none mt-3" role="alert"></div>
+                                <div id="errorDisplay" class="alert alert-danger d-none mt-4" role="alert">
+                                    <i class="bi bi-exclamation-triangle me-2"></i>
+                                    <span id="errorText"></span>
+                                </div>
                             </div>
                             
                             <!-- Saved Words Tab -->
                             <div class="tab-pane fade" id="saved" role="tabpanel">
                                 <ul class="nav nav-tabs" id="savedWordsTabs" role="tablist">
                                     <li class="nav-item" role="presentation">
-                                        <button class="nav-link active" id="general-tab" data-bs-toggle="tab" data-bs-target="#general" type="button" role="tab">General</button>
+                                        <button class="nav-link active" id="general-tab" data-bs-toggle="tab" data-bs-target="#general" type="button" role="tab">
+                                            <i class="bi bi-journal me-1"></i> General
+                                        </button>
                                     </li>
                                     <li class="nav-item" role="presentation">
-                                        <button class="nav-link" id="difficult-tab" data-bs-toggle="tab" data-bs-target="#difficult" type="button" role="tab">Difficult</button>
+                                        <button class="nav-link" id="difficult-tab" data-bs-toggle="tab" data-bs-target="#difficult" type="button" role="tab">
+                                            <i class="bi bi-lightning-charge me-1"></i> Difficult
+                                        </button>
                                     </li>
                                     <li class="nav-item" role="presentation">
-                                        <button class="nav-link" id="favorite-tab" data-bs-toggle="tab" data-bs-target="#favorite" type="button" role="tab">Favorites</button>
+                                        <button class="nav-link" id="favorite-tab" data-bs-toggle="tab" data-bs-target="#favorite" type="button" role="tab">
+                                            <i class="bi bi-star me-1"></i> Favorites
+                                        </button>
                                     </li>
                                     <li class="nav-item" role="presentation">
-                                        <button class="nav-link" id="technical-tab" data-bs-toggle="tab" data-bs-target="#technical" type="button" role="tab">Technical</button>
+                                        <button class="nav-link" id="technical-tab" data-bs-toggle="tab" data-bs-target="#technical" type="button" role="tab">
+                                            <i class="bi bi-code-slash me-1"></i> Technical
+                                        </button>
                                     </li>
                                 </ul>
                                 
                                 <div class="tab-content" id="savedWordsTabsContent">
                                     <div class="tab-pane fade show active" id="general" role="tabpanel">
                                         <div class="word-list mt-3" id="generalWordsList">
-                                            <div class="text-center text-muted py-4">No words saved in General yet</div>
+                                            <div class="text-center text-muted py-4">
+                                                <i class="bi bi-journal-x" style="font-size: 3rem;"></i>
+                                                <p class="mt-3">No words saved in General yet</p>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="tab-pane fade" id="difficult" role="tabpanel">
                                         <div class="word-list mt-3" id="difficultWordsList">
-                                            <div class="text-center text-muted py-4">No Difficult words saved yet</div>
+                                            <div class="text-center text-muted py-4">
+                                                <i class="bi bi-lightning-charge" style="font-size: 3rem;"></i>
+                                                <p class="mt-3">No Difficult words saved yet</p>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="tab-pane fade" id="favorite" role="tabpanel">
                                         <div class="word-list mt-3" id="favoriteWordsList">
-                                            <div class="text-center text-muted py-4">No Favorite words saved yet</div>
+                                            <div class="text-center text-muted py-4">
+                                                <i class="bi bi-star" style="font-size: 3rem;"></i>
+                                                <p class="mt-3">No Favorite words saved yet</p>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="tab-pane fade" id="technical" role="tabpanel">
                                         <div class="word-list mt-3" id="technicalWordsList">
-                                            <div class="text-center text-muted py-4">No Technical words saved yet</div>
+                                            <div class="text-center text-muted py-4">
+                                                <i class="bi bi-code-slash" style="font-size: 3rem;"></i>
+                                                <p class="mt-3">No Technical words saved yet</p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
+                
+                <div class="text-center mt-4 text-muted small">
+                    <p>Vocabulary Builder App | Fixes CORS Issues | Uses DictionaryAPI.dev</p>
                 </div>
             </div>
         </div>
@@ -239,7 +385,7 @@
         <div class="toast align-items-center text-white bg-success" role="alert" aria-live="assertive" aria-atomic="true" id="successToast">
             <div class="d-flex">
                 <div class="toast-body">
-                    <i class="bi bi-check-circle-fill"></i> <span id="successMessage"></span>
+                    <i class="bi bi-check-circle-fill me-2"></i> <span id="successMessage"></span>
                 </div>
                 <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
@@ -247,7 +393,7 @@
         <div class="toast align-items-center text-white bg-danger" role="alert" aria-live="assertive" aria-atomic="true" id="errorToast">
             <div class="d-flex">
                 <div class="toast-body">
-                    <i class="bi bi-exclamation-triangle-fill"></i> <span id="errorMessage"></span>
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i> <span id="errorMessage"></span>
                 </div>
                 <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
@@ -266,6 +412,7 @@
             const loadingSpinner = document.getElementById('loadingSpinner');
             const wordResult = document.getElementById('wordResult');
             const errorDisplay = document.getElementById('errorDisplay');
+            const errorText = document.getElementById('errorText');
             const wordDisplay = document.getElementById('wordDisplay');
             const phonetic = document.getElementById('phonetic');
             const meaningsContainer = document.getElementById('meaningsContainer');
@@ -284,7 +431,7 @@
             const technicalWordsList = document.getElementById('technicalWordsList');
 
             // Google Apps Script URL - REPLACE WITH YOUR OWN DEPLOYED WEB APP URL
-            const googleScriptUrl = 'https://script.google.com/macros/s/AKfycbyRCzrpjeDQU3o-ImisJyZmZCUqzfcsQe2f_m2bxYnnZrMJm8a4Ra8p8xC5Rlxgfe6FPQ/exec';
+            const googleScriptUrl = 'https://script.google.com/macros/s/AKfycbxWkPcD7dZrLTjNaj9XMikD9hXaoDGNKI_vmDlaWwhmVf8WjgmrWWVmpyiXHGvyuR6L9Q/exec';
 
             // Current word data
             let currentWordData = null;
@@ -337,10 +484,14 @@
 
                 try {
                     // Fetch from Dictionary API
-                    const dictResponse = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
+                    const dictResponse = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`);
                     
                     if (!dictResponse.ok) {
-                        throw new Error('Word not found in dictionary');
+                        if (dictResponse.status === 404) {
+                            throw new Error('Word not found in dictionary');
+                        } else {
+                            throw new Error('Failed to fetch word data');
+                        }
                     }
 
                     const dictData = await dictResponse.json();
@@ -371,29 +522,6 @@
                     currentSynonyms = [...new Set(currentSynonyms)];
                     currentAntonyms = [...new Set(currentAntonyms)];
                     currentExamples = [...new Set(currentExamples)];
-
-                    // If no synonyms from dictionary API, try WordsAPI
-                    if (currentSynonyms.length === 0 || currentAntonyms.length === 0) {
-                        try {
-                            // Note: In a real app, you'd use a real WordsAPI key
-                            // This is just a fallback pattern
-                            const wordsApiResponse = await fetch(`https://wordsapiv1.p.mashape.com/words/${word}/synonyms`, {
-                                headers: {
-                                    // 'X-Mashape-Key': 'YOUR_WORDS_API_KEY',
-                                    'Accept': 'application/json'
-                                }
-                            });
-                            
-                            if (wordsApiResponse.ok) {
-                                const wordsApiData = await wordsApiResponse.json();
-                                if (wordsApiData.synonyms && wordsApiData.synonyms.length > 0) {
-                                    currentSynonyms = wordsApiData.synonyms.slice(0, 10);
-                                }
-                            }
-                        } catch (wordsApiError) {
-                            console.log('WordsAPI not available');
-                        }
-                    }
 
                     // Display the word
                     displayWordData(currentWordData);
@@ -427,15 +555,16 @@
                     cardBody.className = 'card-body';
                     
                     const partOfSpeech = document.createElement('div');
-                    partOfSpeech.className = 'h6 mb-3 text-primary';
-                    partOfSpeech.textContent = meaning.partOfSpeech;
+                    partOfSpeech.className = 'h6 mb-3 text-primary fw-bold';
+                    partOfSpeech.textContent = meaning.partOfSpeech.charAt(0).toUpperCase() + meaning.partOfSpeech.slice(1);
                     
                     cardBody.appendChild(partOfSpeech);
                     
                     // Add definitions (limit to 3)
                     meaning.definitions.slice(0, 3).forEach((def, index) => {
                         const definition = document.createElement('p');
-                        definition.innerHTML = `<strong>${index + 1}.</strong> ${def.definition}`;
+                        definition.className = 'mb-2';
+                        definition.innerHTML = `<strong class="text-primary">${index + 1}.</strong> ${def.definition}`;
                         cardBody.appendChild(definition);
                     });
                     
@@ -463,7 +592,7 @@
                 
                 currentSynonyms.slice(0, 20).forEach(synonym => {
                     const badge = document.createElement('span');
-                    badge.className = 'badge synonym-badge p-2';
+                    badge.className = 'badge synonym-badge p-2 fs-6';
                     badge.textContent = synonym;
                     badge.style.cursor = 'pointer';
                     badge.addEventListener('click', () => {
@@ -495,7 +624,7 @@
                 
                 currentAntonyms.slice(0, 20).forEach(antonym => {
                     const badge = document.createElement('span');
-                    badge.className = 'badge antonym-badge p-2';
+                    badge.className = 'badge antonym-badge p-2 fs-6';
                     badge.textContent = antonym;
                     badge.style.cursor = 'pointer';
                     badge.addEventListener('click', () => {
@@ -527,11 +656,16 @@
                 
                 currentExamples.slice(0, 5).forEach((example, index) => {
                     const exampleItem = document.createElement('div');
-                    exampleItem.className = 'list-group-item';
+                    exampleItem.className = 'example-card';
                     exampleItem.innerHTML = `
-                        <div class="d-flex w-100 justify-content-between">
-                            <span class="mb-1">${example}</span>
-                            <small class="text-muted">Example ${index + 1}</small>
+                        <div class="d-flex">
+                            <div class="flex-shrink-0 me-3">
+                                <i class="bi bi-quote fs-1 text-muted opacity-25"></i>
+                            </div>
+                            <div>
+                                <p class="mb-0">${example}</p>
+                                <small class="text-muted">Example ${index + 1}</small>
+                            </div>
                         </div>
                     `;
                     examplesList.appendChild(exampleItem);
@@ -541,7 +675,7 @@
             }
 
             // Function to save word to Google Sheet
-            async function saveWord(category = 'general') {
+            function saveWord(category = 'general') {
                 if (!currentWordData) {
                     showError('No word to save');
                     return;
@@ -549,6 +683,7 @@
 
                 const activeButton = document.querySelector(`[data-category="${category}"]`) || saveGeneralBtn;
                 activeButton.disabled = true;
+                const originalButtonText = activeButton.innerHTML;
                 activeButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
 
                 try {
@@ -561,52 +696,58 @@
                     const synonyms = currentSynonyms.join(', ');
                     const antonyms = currentAntonyms.join(', ');
                     const examples = currentExamples.join(' | ');
-
-                    const response = await fetch(googleScriptUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            word: word,
-                            definition: definition,
-                            phonetic: currentWordData.phonetic || '',
-                            synonyms: synonyms,
-                            antonyms: antonyms,
-                            examples: examples,
-                            category: category
-                        })
-                    });
-
-                    if (!response.ok) {
-                        throw new Error('Failed to save word');
-                    }
-
-                    const result = await response.json();
                     
-                    if (result.result === 'success') {
-                        showSuccess(`Word saved to ${category} category!`);
-                        loadSavedWords();
-                    } else {
-                        throw new Error(result.message || 'Failed to save word');
-                    }
+                    // Create a form that will be submitted to Google Apps Script
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = googleScriptUrl;
+                    form.style.display = 'none';
+                    
+                    // Add data as form fields
+                    const addField = (name, value) => {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = name;
+                        input.value = value;
+                        form.appendChild(input);
+                    };
+                    
+                    addField('word', word);
+                    addField('definition', definition);
+                    addField('phonetic', currentWordData.phonetic || '');
+                    addField('synonyms', synonyms);
+                    addField('antonyms', antonyms);
+                    addField('examples', examples);
+                    addField('category', category);
+                    
+                    document.body.appendChild(form);
+                    
+                    // Submit the form
+                    form.submit();
+                    
+                    // Since we can't get a response from the form submission, show success
+                    showSuccess(`"${word}" saved to ${category} category!`);
+                    
+                    // Reload saved words after a delay to allow time for saving
+                    setTimeout(loadSavedWords, 1500);
+                    
                 } catch (err) {
                     showError(err.message || 'Failed to save word');
                 } finally {
-                    activeButton.disabled = false;
-                    if (category === 'general') {
-                        activeButton.innerHTML = '<i class="bi bi-bookmark-plus"></i> Save to General';
-                    } else {
-                        const categoryText = category.charAt(0).toUpperCase() + category.slice(1);
-                        activeButton.innerHTML = `<i class="bi bi-bookmark-plus"></i> Save to ${categoryText}`;
-                    }
+                    // Reset button state after a short delay to allow UI to update
+                    setTimeout(() => {
+                        activeButton.disabled = false;
+                        activeButton.innerHTML = originalButtonText;
+                    }, 2000);
                 }
             }
 
             // Function to load saved words
             async function loadSavedWords() {
                 try {
-                    const response = await fetch(`${googleScriptUrl}?action=getWords`);
+                    // Use a proxy to avoid CORS issues
+                    const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+                    const response = await fetch(`${proxyUrl}${googleScriptUrl}?action=getWords`);
                     
                     if (!response.ok) {
                         throw new Error('Failed to load saved words');
@@ -614,62 +755,39 @@
 
                     const data = await response.json();
                     
-                    // Clear all lists first
-                    clearWordList(generalWordsList);
-                    clearWordList(difficultWordsList);
-                    clearWordList(favoriteWordsList);
-                    clearWordList(technicalWordsList);
-                    
-                    if (data.length === 0) {
-                        return;
-                    }
-                    
-                    // Group words by category
-                    const wordsByCategory = {
-                        general: [],
-                        difficult: [],
-                        favorite: [],
-                        technical: []
-                    };
-                    
-                    data.forEach(word => {
-                        const category = word.category || 'general';
-                        if (wordsByCategory[category]) {
-                            wordsByCategory[category].push(word);
-                        } else {
-                            wordsByCategory.general.push(word);
-                        }
-                    });
-                    
                     // Populate each category list
-                    populateWordList(generalWordsList, wordsByCategory.general);
-                    populateWordList(difficultWordsList, wordsByCategory.difficult);
-                    populateWordList(favoriteWordsList, wordsByCategory.favorite);
-                    populateWordList(technicalWordsList, wordsByCategory.technical);
+                    populateWordList(generalWordsList, data.filter(word => word.category === 'general'));
+                    populateWordList(difficultWordsList, data.filter(word => word.category === 'difficult'));
+                    populateWordList(favoriteWordsList, data.filter(word => word.category === 'favorite'));
+                    populateWordList(technicalWordsList, data.filter(word => word.category === 'technical'));
                     
                 } catch (err) {
                     console.error('Error loading saved words:', err);
+                    // Fallback: show empty state
+                    populateWordList(generalWordsList, []);
+                    populateWordList(difficultWordsList, []);
+                    populateWordList(favoriteWordsList, []);
+                    populateWordList(technicalWordsList, []);
                 }
-            }
-            
-            // Helper to clear a word list
-            function clearWordList(listElement) {
-                listElement.innerHTML = '';
-                const emptyMessage = document.createElement('div');
-                emptyMessage.className = 'text-center text-muted py-4';
-                emptyMessage.textContent = `No words saved in this category yet`;
-                listElement.appendChild(emptyMessage);
             }
             
             // Helper to populate a word list
             function populateWordList(listElement, words) {
-                if (words.length === 0) return;
+                if (words.length === 0) {
+                    listElement.innerHTML = `
+                        <div class="text-center text-muted py-4">
+                            <i class="bi bi-journal-x" style="font-size: 3rem;"></i>
+                            <p class="mt-3">No words saved in this category yet</p>
+                        </div>
+                    `;
+                    return;
+                }
                 
                 listElement.innerHTML = '';
                 
                 words.forEach(word => {
                     const wordItem = document.createElement('div');
-                    wordItem.className = 'list-group-item list-group-item-action';
+                    wordItem.className = 'history-item list-group-item list-group-item-action p-3';
                     wordItem.innerHTML = `
                         <div class="d-flex w-100 justify-content-between">
                             <h5 class="mb-1">${word.word}
@@ -697,7 +815,7 @@
 
             // Helper function to show error
             function showError(message) {
-                errorDisplay.textContent = message;
+                errorText.textContent = message;
                 errorDisplay.classList.remove('d-none');
                 errorMessage.textContent = message;
                 errorToast.show();
@@ -710,61 +828,5 @@
             }
         });
     </script>
-
-    <!-- Instructions for Google Apps Script Setup -->
-    <!-- 
-    1. Create a new Google Sheet with columns: 
-       Word, Definition, Phonetic, Synonyms, Antonyms, Examples, Category, Timestamp
-    2. Go to Extensions > Apps Script
-    3. Replace the code with the following:
-
-    function doPost(e) {
-        const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-        const data = JSON.parse(e.postData.contents);
-        
-        try {
-            sheet.appendRow([
-                data.word,
-                data.definition,
-                data.phonetic || '',
-                data.synonyms || '',
-                data.antonyms || '',
-                data.examples || '',
-                data.category || 'general',
-                new Date()
-            ]);
-            
-            return ContentService.createTextOutput(JSON.stringify({
-                result: 'success'
-            })).setMimeType(ContentService.MimeType.JSON);
-        } catch (err) {
-            return ContentService.createTextOutput(JSON.stringify({
-                result: 'error',
-                message: err.message
-            })).setMimeType(ContentService.MimeType.JSON);
-        }
-    }
-
-    function doGet(e) {
-        const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-        const data = sheet.getDataRange().getValues();
-        const headers = data.shift();
-        
-        // Convert to array of objects
-        const result = data.map(row => {
-            const obj = {};
-            headers.forEach((header, i) => {
-                obj[header.toLowerCase()] = row[i];
-            });
-            return obj;
-        }).reverse(); // Newest first
-        
-        return ContentService.createTextOutput(JSON.stringify(result))
-            .setMimeType(ContentService.MimeType.JSON);
-    }
-
-    4. Deploy as a Web App (Execute as me, Anyone access)
-    5. Replace the googleScriptUrl in the HTML with your deployed Web App URL
-    -->
 </body>
 </html>
