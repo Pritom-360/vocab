@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Vocabulary Builder</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding-top: 2rem;
+        }
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            border: none;
+        }
+        .nav-tabs .nav-link {
+            color: #495057;
+            font-weight: 500;
+        }
+        .nav-tabs .nav-link.active {
+            color: #4e73df;
+            font-weight: 600;
+        }
+        .btn-primary {
+            background-color: #4e73df;
+            border-color: #4e73df;
+        }
+        .btn-primary:hover {
+            background-color: #3a5ec0;
+            border-color: #3a5ec0;
+        }
+        .word-display {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2e3a4d;
+        }
+        .phonetic {
+            color: #6c757d;
+            font-style: italic;
+        }
+        .meaning-card {
+            background-color: #f8f9fa;
+            border-left: 4px solid #4e73df;
+        }
+        .example {
+            background-color: #e9ecef;
+            border-radius: 5px;
+            padding: 0.5rem;
+            font-style: italic;
+        }
+        .synonym-badge {
+            background-color: #d1e7dd;
+            color: #0f5132;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+        .antonym-badge {
+            background-color: #f8d7da;
+            color: #842029;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+        #loadingSpinner {
+            display: none;
+        }
+        .word-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1100;
+        }
+        .category-badge {
+            font-size: 0.75rem;
+            margin-left: 8px;
+        }
+        .tab-pane {
+            padding: 15px;
+            background-color: white;
+            border-radius: 0 0 10px 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card">
+                    <div class="card-header bg-white">
+                        <h1 class="h4 text-center">Advanced Vocabulary Builder</h1>
+                    </div>
+                    <div class="card-body">
+                        <ul class="nav nav-tabs" id="mainTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="search-tab" data-bs-toggle="tab" data-bs-target="#search" type="button" role="tab">Search Words</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="saved-tab" data-bs-toggle="tab" data-bs-target="#saved" type="button" role="tab">Saved Words</button>
+                            </li>
+                        </ul>
+                        
+                        <div class="tab-content" id="mainTabsContent">
+                            <!-- Search Tab -->
+                            <div class="tab-pane fade show active" id="search" role="tabpanel">
+                                <div class="mb-4">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="wordInput" placeholder="Enter a word..." aria-label="Enter a word">
+                                        <button class="btn btn-primary" type="button" id="searchBtn">
+                                            <i class="bi bi-search"></i> Search
+                                        </button>
+                                    </div>
+                                    <div class="form-text text-muted">Enter an English word to look up its definition, synonyms, and antonyms</div>
+                                </div>
+
+                                <div id="loadingSpinner" class="text-center my-4">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <p class="mt-2">Fetching word data...</p>
+                                </div>
+
+                                <div id="wordResult" class="d-none">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <div>
+                                            <div class="word-display" id="wordDisplay"></div>
+                                            <div class="phonetic" id="phonetic"></div>
+                                        </div>
+                                        <div>
+                                            <button class="btn btn-success me-2" id="saveGeneralBtn">
+                                                <i class="bi bi-bookmark-plus"></i> Save to General
+                                            </button>
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    Save to Category
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><a class="dropdown-item" href="#" data-category="difficult">Difficult Words</a></li>
+                                                    <li><a class="dropdown-item" href="#" data-category="favorite">Favorite Words</a></li>
+                                                    <li><a class="dropdown-item" href="#" data-category="technical">Technical Terms</a></li>
+                                                    <li><hr class="dropdown-divider"></li>
+                                                    <li><a class="dropdown-item" href="#" data-category="custom">Custom Category</a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <ul class="nav nav-tabs" id="wordDetailTabs" role="tablist">
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link active" id="definitions-tab" data-bs-toggle="tab" data-bs-target="#definitions" type="button" role="tab">Definitions</button>
+                                        </li>
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link" id="synonyms-tab" data-bs-toggle="tab" data-bs-target="#synonyms" type="button" role="tab">Synonyms</button>
+                                        </li>
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link" id="antonyms-tab" data-bs-toggle="tab" data-bs-target="#antonyms" type="button" role="tab">Antonyms</button>
+                                        </li>
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link" id="examples-tab" data-bs-toggle="tab" data-bs-target="#examples" type="button" role="tab">Examples</button>
+                                        </li>
+                                    </ul>
+                                    
+                                    <div class="tab-content" id="wordDetailTabsContent">
+                                        <div class="tab-pane fade show active" id="definitions" role="tabpanel">
+                                            <div id="meaningsContainer" class="mt-3"></div>
+                                        </div>
+                                        <div class="tab-pane fade" id="synonyms" role="tabpanel">
+                                            <div id="synonymsContainer" class="mt-3"></div>
+                                        </div>
+                                        <div class="tab-pane fade" id="antonyms" role="tabpanel">
+                                            <div id="antonymsContainer" class="mt-3"></div>
+                                        </div>
+                                        <div class="tab-pane fade" id="examples" role="tabpanel">
+                                            <div id="examplesContainer" class="mt-3"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="errorDisplay" class="alert alert-danger d-none mt-3" role="alert"></div>
+                            </div>
+                            
+                            <!-- Saved Words Tab -->
+                            <div class="tab-pane fade" id="saved" role="tabpanel">
+                                <ul class="nav nav-tabs" id="savedWordsTabs" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active" id="general-tab" data-bs-toggle="tab" data-bs-target="#general" type="button" role="tab">General</button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="difficult-tab" data-bs-toggle="tab" data-bs-target="#difficult" type="button" role="tab">Difficult</button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="favorite-tab" data-bs-toggle="tab" data-bs-target="#favorite" type="button" role="tab">Favorites</button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="technical-tab" data-bs-toggle="tab" data-bs-target="#technical" type="button" role="tab">Technical</button>
+                                    </li>
+                                </ul>
+                                
+                                <div class="tab-content" id="savedWordsTabsContent">
+                                    <div class="tab-pane fade show active" id="general" role="tabpanel">
+                                        <div class="word-list mt-3" id="generalWordsList">
+                                            <div class="text-center text-muted py-4">No words saved in General yet</div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="difficult" role="tabpanel">
+                                        <div class="word-list mt-3" id="difficultWordsList">
+                                            <div class="text-center text-muted py-4">No Difficult words saved yet</div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="favorite" role="tabpanel">
+                                        <div class="word-list mt-3" id="favoriteWordsList">
+                                            <div class="text-center text-muted py-4">No Favorite words saved yet</div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="technical" role="tabpanel">
+                                        <div class="word-list mt-3" id="technicalWordsList">
+                                            <div class="text-center text-muted py-4">No Technical words saved yet</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container">
+        <div class="toast align-items-center text-white bg-success" role="alert" aria-live="assertive" aria-atomic="true" id="successToast">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="bi bi-check-circle-fill"></i> <span id="successMessage"></span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+        <div class="toast align-items-center text-white bg-danger" role="alert" aria-live="assertive" aria-atomic="true" id="errorToast">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="bi bi-exclamation-triangle-fill"></i> <span id="errorMessage"></span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elements
+            const wordInput = document.getElementById('wordInput');
+            const searchBtn = document.getElementById('searchBtn');
+            const saveGeneralBtn = document.getElementById('saveGeneralBtn');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const wordResult = document.getElementById('wordResult');
+            const errorDisplay = document.getElementById('errorDisplay');
+            const wordDisplay = document.getElementById('wordDisplay');
+            const phonetic = document.getElementById('phonetic');
+            const meaningsContainer = document.getElementById('meaningsContainer');
+            const synonymsContainer = document.getElementById('synonymsContainer');
+            const antonymsContainer = document.getElementById('antonymsContainer');
+            const examplesContainer = document.getElementById('examplesContainer');
+            const successToast = new bootstrap.Toast(document.getElementById('successToast'));
+            const errorToast = new bootstrap.Toast(document.getElementById('errorToast'));
+            const successMessage = document.getElementById('successMessage');
+            const errorMessage = document.getElementById('errorMessage');
+
+            // Word lists
+            const generalWordsList = document.getElementById('generalWordsList');
+            const difficultWordsList = document.getElementById('difficultWordsList');
+            const favoriteWordsList = document.getElementById('favoriteWordsList');
+            const technicalWordsList = document.getElementById('technicalWordsList');
+
+            // Google Apps Script URL - REPLACE WITH YOUR OWN DEPLOYED WEB APP URL
+            const googleScriptUrl = 'https://script.google.com/macros/s/AKfycbyRCzrpjeDQU3o-ImisJyZmZCUqzfcsQe2f_m2bxYnnZrMJm8a4Ra8p8xC5Rlxgfe6FPQ/exec';
+
+            // Current word data
+            let currentWordData = null;
+            let currentSynonyms = [];
+            let currentAntonyms = [];
+            let currentExamples = [];
+
+            // Load saved words
+            loadSavedWords();
+
+            // Event listeners
+            searchBtn.addEventListener('click', searchWord);
+            wordInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchWord();
+                }
+            });
+            saveGeneralBtn.addEventListener('click', () => saveWord('general'));
+            
+            // Category dropdown event listeners
+            document.querySelectorAll('[data-category]').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const category = this.getAttribute('data-category');
+                    if (category === 'custom') {
+                        const customCategory = prompt('Enter custom category name:');
+                        if (customCategory) {
+                            saveWord(customCategory.toLowerCase());
+                        }
+                    } else {
+                        saveWord(category);
+                    }
+                });
+            });
+
+            // Function to search for a word
+            async function searchWord() {
+                const word = wordInput.value.trim();
+                
+                // Validate input
+                if (!word) {
+                    showError('Please enter a word to search');
+                    return;
+                }
+
+                // Clear previous results
+                wordResult.classList.add('d-none');
+                errorDisplay.classList.add('d-none');
+                loadingSpinner.style.display = 'block';
+
+                try {
+                    // Fetch from Dictionary API
+                    const dictResponse = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
+                    
+                    if (!dictResponse.ok) {
+                        throw new Error('Word not found in dictionary');
+                    }
+
+                    const dictData = await dictResponse.json();
+                    currentWordData = dictData[0]; // Take the first result if multiple
+
+                    // Extract synonyms and antonyms from all meanings
+                    currentSynonyms = [];
+                    currentAntonyms = [];
+                    currentExamples = [];
+                    
+                    currentWordData.meanings.forEach(meaning => {
+                        if (meaning.synonyms && meaning.synonyms.length > 0) {
+                            currentSynonyms.push(...meaning.synonyms);
+                        }
+                        if (meaning.antonyms && meaning.antonyms.length > 0) {
+                            currentAntonyms.push(...meaning.antonyms);
+                        }
+                        
+                        // Get examples from definitions
+                        meaning.definitions.forEach(def => {
+                            if (def.example) {
+                                currentExamples.push(def.example);
+                            }
+                        });
+                    });
+
+                    // Remove duplicates
+                    currentSynonyms = [...new Set(currentSynonyms)];
+                    currentAntonyms = [...new Set(currentAntonyms)];
+                    currentExamples = [...new Set(currentExamples)];
+
+                    // If no synonyms from dictionary API, try WordsAPI
+                    if (currentSynonyms.length === 0 || currentAntonyms.length === 0) {
+                        try {
+                            // Note: In a real app, you'd use a real WordsAPI key
+                            // This is just a fallback pattern
+                            const wordsApiResponse = await fetch(`https://wordsapiv1.p.mashape.com/words/${word}/synonyms`, {
+                                headers: {
+                                    // 'X-Mashape-Key': 'YOUR_WORDS_API_KEY',
+                                    'Accept': 'application/json'
+                                }
+                            });
+                            
+                            if (wordsApiResponse.ok) {
+                                const wordsApiData = await wordsApiResponse.json();
+                                if (wordsApiData.synonyms && wordsApiData.synonyms.length > 0) {
+                                    currentSynonyms = wordsApiData.synonyms.slice(0, 10);
+                                }
+                            }
+                        } catch (wordsApiError) {
+                            console.log('WordsAPI not available');
+                        }
+                    }
+
+                    // Display the word
+                    displayWordData(currentWordData);
+                    displaySynonyms();
+                    displayAntonyms();
+                    displayExamples();
+                    
+                    // Show the result
+                    loadingSpinner.style.display = 'none';
+                    wordResult.classList.remove('d-none');
+                } catch (err) {
+                    loadingSpinner.style.display = 'none';
+                    showError(err.message || 'Failed to fetch word data');
+                }
+            }
+
+            // Function to display word data
+            function displayWordData(data) {
+                wordDisplay.textContent = data.word;
+                phonetic.textContent = data.phonetic || data.phonetics.find(p => p.text)?.text || '';
+                
+                // Clear previous meanings
+                meaningsContainer.innerHTML = '';
+                
+                // Display each meaning
+                data.meanings.forEach(meaning => {
+                    const meaningCard = document.createElement('div');
+                    meaningCard.className = 'card mb-3 meaning-card';
+                    
+                    const cardBody = document.createElement('div');
+                    cardBody.className = 'card-body';
+                    
+                    const partOfSpeech = document.createElement('div');
+                    partOfSpeech.className = 'h6 mb-3 text-primary';
+                    partOfSpeech.textContent = meaning.partOfSpeech;
+                    
+                    cardBody.appendChild(partOfSpeech);
+                    
+                    // Add definitions (limit to 3)
+                    meaning.definitions.slice(0, 3).forEach((def, index) => {
+                        const definition = document.createElement('p');
+                        definition.innerHTML = `<strong>${index + 1}.</strong> ${def.definition}`;
+                        cardBody.appendChild(definition);
+                    });
+                    
+                    meaningCard.appendChild(cardBody);
+                    meaningsContainer.appendChild(meaningCard);
+                });
+            }
+
+            // Function to display synonyms
+            function displaySynonyms() {
+                synonymsContainer.innerHTML = '';
+                
+                if (currentSynonyms.length === 0) {
+                    synonymsContainer.innerHTML = '<div class="alert alert-info">No synonyms found for this word.</div>';
+                    return;
+                }
+                
+                const synonymsTitle = document.createElement('h5');
+                synonymsTitle.className = 'h5 mb-3';
+                synonymsTitle.textContent = 'Synonyms:';
+                synonymsContainer.appendChild(synonymsTitle);
+                
+                const synonymsList = document.createElement('div');
+                synonymsList.className = 'd-flex flex-wrap';
+                
+                currentSynonyms.slice(0, 20).forEach(synonym => {
+                    const badge = document.createElement('span');
+                    badge.className = 'badge synonym-badge p-2';
+                    badge.textContent = synonym;
+                    badge.style.cursor = 'pointer';
+                    badge.addEventListener('click', () => {
+                        wordInput.value = synonym;
+                        searchWord();
+                    });
+                    synonymsList.appendChild(badge);
+                });
+                
+                synonymsContainer.appendChild(synonymsList);
+            }
+
+            // Function to display antonyms
+            function displayAntonyms() {
+                antonymsContainer.innerHTML = '';
+                
+                if (currentAntonyms.length === 0) {
+                    antonymsContainer.innerHTML = '<div class="alert alert-info">No antonyms found for this word.</div>';
+                    return;
+                }
+                
+                const antonymsTitle = document.createElement('h5');
+                antonymsTitle.className = 'h5 mb-3';
+                antonymsTitle.textContent = 'Antonyms:';
+                antonymsContainer.appendChild(antonymsTitle);
+                
+                const antonymsList = document.createElement('div');
+                antonymsList.className = 'd-flex flex-wrap';
+                
+                currentAntonyms.slice(0, 20).forEach(antonym => {
+                    const badge = document.createElement('span');
+                    badge.className = 'badge antonym-badge p-2';
+                    badge.textContent = antonym;
+                    badge.style.cursor = 'pointer';
+                    badge.addEventListener('click', () => {
+                        wordInput.value = antonym;
+                        searchWord();
+                    });
+                    antonymsList.appendChild(badge);
+                });
+                
+                antonymsContainer.appendChild(antonymsList);
+            }
+
+            // Function to display examples
+            function displayExamples() {
+                examplesContainer.innerHTML = '';
+                
+                if (currentExamples.length === 0) {
+                    examplesContainer.innerHTML = '<div class="alert alert-info">No examples found for this word.</div>';
+                    return;
+                }
+                
+                const examplesTitle = document.createElement('h5');
+                examplesTitle.className = 'h5 mb-3';
+                examplesTitle.textContent = 'Example Sentences:';
+                examplesContainer.appendChild(examplesTitle);
+                
+                const examplesList = document.createElement('div');
+                examplesList.className = 'list-group';
+                
+                currentExamples.slice(0, 5).forEach((example, index) => {
+                    const exampleItem = document.createElement('div');
+                    exampleItem.className = 'list-group-item';
+                    exampleItem.innerHTML = `
+                        <div class="d-flex w-100 justify-content-between">
+                            <span class="mb-1">${example}</span>
+                            <small class="text-muted">Example ${index + 1}</small>
+                        </div>
+                    `;
+                    examplesList.appendChild(exampleItem);
+                });
+                
+                examplesContainer.appendChild(examplesList);
+            }
+
+            // Function to save word to Google Sheet
+            async function saveWord(category = 'general') {
+                if (!currentWordData) {
+                    showError('No word to save');
+                    return;
+                }
+
+                const activeButton = document.querySelector(`[data-category="${category}"]`) || saveGeneralBtn;
+                activeButton.disabled = true;
+                activeButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
+
+                try {
+                    // Prepare data for Google Sheet
+                    const word = currentWordData.word;
+                    const definition = currentWordData.meanings.map(meaning => {
+                        return `${meaning.partOfSpeech}: ${meaning.definitions[0].definition}`;
+                    }).join('; ');
+
+                    const synonyms = currentSynonyms.join(', ');
+                    const antonyms = currentAntonyms.join(', ');
+                    const examples = currentExamples.join(' | ');
+
+                    const response = await fetch(googleScriptUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            word: word,
+                            definition: definition,
+                            phonetic: currentWordData.phonetic || '',
+                            synonyms: synonyms,
+                            antonyms: antonyms,
+                            examples: examples,
+                            category: category
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to save word');
+                    }
+
+                    const result = await response.json();
+                    
+                    if (result.result === 'success') {
+                        showSuccess(`Word saved to ${category} category!`);
+                        loadSavedWords();
+                    } else {
+                        throw new Error(result.message || 'Failed to save word');
+                    }
+                } catch (err) {
+                    showError(err.message || 'Failed to save word');
+                } finally {
+                    activeButton.disabled = false;
+                    if (category === 'general') {
+                        activeButton.innerHTML = '<i class="bi bi-bookmark-plus"></i> Save to General';
+                    } else {
+                        const categoryText = category.charAt(0).toUpperCase() + category.slice(1);
+                        activeButton.innerHTML = `<i class="bi bi-bookmark-plus"></i> Save to ${categoryText}`;
+                    }
+                }
+            }
+
+            // Function to load saved words
+            async function loadSavedWords() {
+                try {
+                    const response = await fetch(`${googleScriptUrl}?action=getWords`);
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to load saved words');
+                    }
+
+                    const data = await response.json();
+                    
+                    // Clear all lists first
+                    clearWordList(generalWordsList);
+                    clearWordList(difficultWordsList);
+                    clearWordList(favoriteWordsList);
+                    clearWordList(technicalWordsList);
+                    
+                    if (data.length === 0) {
+                        return;
+                    }
+                    
+                    // Group words by category
+                    const wordsByCategory = {
+                        general: [],
+                        difficult: [],
+                        favorite: [],
+                        technical: []
+                    };
+                    
+                    data.forEach(word => {
+                        const category = word.category || 'general';
+                        if (wordsByCategory[category]) {
+                            wordsByCategory[category].push(word);
+                        } else {
+                            wordsByCategory.general.push(word);
+                        }
+                    });
+                    
+                    // Populate each category list
+                    populateWordList(generalWordsList, wordsByCategory.general);
+                    populateWordList(difficultWordsList, wordsByCategory.difficult);
+                    populateWordList(favoriteWordsList, wordsByCategory.favorite);
+                    populateWordList(technicalWordsList, wordsByCategory.technical);
+                    
+                } catch (err) {
+                    console.error('Error loading saved words:', err);
+                }
+            }
+            
+            // Helper to clear a word list
+            function clearWordList(listElement) {
+                listElement.innerHTML = '';
+                const emptyMessage = document.createElement('div');
+                emptyMessage.className = 'text-center text-muted py-4';
+                emptyMessage.textContent = `No words saved in this category yet`;
+                listElement.appendChild(emptyMessage);
+            }
+            
+            // Helper to populate a word list
+            function populateWordList(listElement, words) {
+                if (words.length === 0) return;
+                
+                listElement.innerHTML = '';
+                
+                words.forEach(word => {
+                    const wordItem = document.createElement('div');
+                    wordItem.className = 'list-group-item list-group-item-action';
+                    wordItem.innerHTML = `
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">${word.word}
+                                <span class="badge bg-secondary category-badge">${word.category || 'general'}</span>
+                            </h5>
+                            <small>${new Date(word.timestamp).toLocaleDateString()}</small>
+                        </div>
+                        <p class="mb-1">${word.definition.split(';')[0]}</p>
+                        <div class="d-flex flex-wrap mt-2">
+                            ${word.synonyms ? word.synonyms.split(',').slice(0, 3).map(s => `
+                                <span class="badge synonym-badge me-1 mb-1">${s.trim()}</span>
+                            `).join('') : ''}
+                        </div>
+                    `;
+                    
+                    wordItem.addEventListener('click', function() {
+                        wordInput.value = word.word;
+                        document.getElementById('search-tab').click();
+                        searchWord();
+                    });
+                    
+                    listElement.appendChild(wordItem);
+                });
+            }
+
+            // Helper function to show error
+            function showError(message) {
+                errorDisplay.textContent = message;
+                errorDisplay.classList.remove('d-none');
+                errorMessage.textContent = message;
+                errorToast.show();
+            }
+
+            // Helper function to show success message
+            function showSuccess(message) {
+                successMessage.textContent = message;
+                successToast.show();
+            }
+        });
+    </script>
+
+    <!-- Instructions for Google Apps Script Setup -->
+    <!-- 
+    1. Create a new Google Sheet with columns: 
+       Word, Definition, Phonetic, Synonyms, Antonyms, Examples, Category, Timestamp
+    2. Go to Extensions > Apps Script
+    3. Replace the code with the following:
+
+    function doPost(e) {
+        const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+        const data = JSON.parse(e.postData.contents);
+        
+        try {
+            sheet.appendRow([
+                data.word,
+                data.definition,
+                data.phonetic || '',
+                data.synonyms || '',
+                data.antonyms || '',
+                data.examples || '',
+                data.category || 'general',
+                new Date()
+            ]);
+            
+            return ContentService.createTextOutput(JSON.stringify({
+                result: 'success'
+            })).setMimeType(ContentService.MimeType.JSON);
+        } catch (err) {
+            return ContentService.createTextOutput(JSON.stringify({
+                result: 'error',
+                message: err.message
+            })).setMimeType(ContentService.MimeType.JSON);
+        }
+    }
+
+    function doGet(e) {
+        const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+        const data = sheet.getDataRange().getValues();
+        const headers = data.shift();
+        
+        // Convert to array of objects
+        const result = data.map(row => {
+            const obj = {};
+            headers.forEach((header, i) => {
+                obj[header.toLowerCase()] = row[i];
+            });
+            return obj;
+        }).reverse(); // Newest first
+        
+        return ContentService.createTextOutput(JSON.stringify(result))
+            .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    4. Deploy as a Web App (Execute as me, Anyone access)
+    5. Replace the googleScriptUrl in the HTML with your deployed Web App URL
+    -->
+</body>
+</html>
