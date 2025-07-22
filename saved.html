@@ -4,18 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Words - Vocabulary Builder</title>
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <style>
-        :root {
-            --primary-color: #4A90E2;
-            --primary-dark: #357ABD;
-            --light-bg: #F5F7FA;
-            --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            --border-radius: 12px;
-        }
+        :root { --primary-color: #4A90E2; --primary-dark: #357ABD; --light-bg: #F5F7FA; --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); --border-radius: 12px; }
         body { background-color: var(--light-bg); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
         .navbar { background-color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .main-container { max-width: 960px; margin-top: 3rem; }
@@ -23,133 +15,79 @@
         .category-tabs .nav-link { color: #6c757d; font-weight: 500; border-radius: 8px 8px 0 0; }
         .category-tabs .nav-link.active { color: var(--primary-color); background-color: var(--light-bg); border-color: #dee2e6 #dee2e6 var(--light-bg); }
         .word-list { max-height: 60vh; overflow-y: auto; }
-        .word-item { border: 1px solid #e9ecef; border-left-width: 4px; border-left-color: var(--primary-color); border-radius: 8px; transition: all 0.2s ease; cursor: pointer; }
-        .word-item:hover { background-color: #f8f9fa; transform: translateX(5px); }
+        .word-item { border: 1px solid #e9ecef; border-left-width: 4px; border-left-color: var(--primary-color); border-radius: 8px; transition: all 0.3s ease; }
+        .word-item-content:hover { background-color: #f8f9fa; transform: translateX(5px); }
+        .delete-btn { font-size: 1.2rem; cursor: pointer; color: #dc3545; opacity: 0.6; transition: opacity 0.2s ease; }
+        .delete-btn:hover { opacity: 1; }
         .category-badge { font-size: 0.75em; font-weight: 500; }
         .toast-container { z-index: 1100; }
     </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="index.html"><i class="bi bi-journal-bookmark-fill text-primary"></i> VocabBuilder</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="index.html"><i class="bi bi-search"></i> Search</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="saved.html"><i class="bi bi-bookmarks"></i> My Words</a></li>
-                </ul>
-            </div>
-        </div>
+        <div class="container"><a class="navbar-brand fw-bold" href="index.html"><i class="bi bi-journal-bookmark-fill text-primary"></i> VocabBuilder</a><button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"><span class="navbar-toggler-icon"></span></button><div class="collapse navbar-collapse" id="navbarNav"><ul class="navbar-nav ms-auto"><li class="nav-item"><a class="nav-link" href="index.html"><i class="bi bi-search"></i> Search</a></li><li class="nav-item"><a class="nav-link active" href="saved.html"><i class="bi bi-bookmarks"></i> My Words</a></li></ul></div></div>
     </nav>
-    
     <div class="container main-container">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <h1 class="display-5">My Vocabulary</h1>
-                <p class="lead text-muted">All the words you have saved, organized by category.</p>
-            </div>
-            <button class="btn btn-outline-primary" id="refreshBtn">
-                <i class="bi bi-arrow-clockwise me-1"></i> Refresh
-            </button>
-        </div>
-
+        <div class="d-flex justify-content-between align-items-center mb-4"><div><h1 class="display-5">My Vocabulary</h1><p class="lead text-muted">All the words you have saved, organized by category.</p></div><button class="btn btn-outline-primary" id="refreshBtn"><i class="bi bi-arrow-clockwise me-1"></i> Refresh</button></div>
         <div class="saved-words-card">
-            <ul class="nav nav-tabs category-tabs p-3" id="savedWordsTabs" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#general-pane" type="button">General</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#difficult-pane" type="button">Difficult</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#favorite-pane" type="button">Favorite</button>
-                </li>
-                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#technical-pane" type="button">Technical</button>
-                </li>
-            </ul>
-            <div class="tab-content bg-light p-3" id="savedWordsTabsContent">
-                <div class="tab-pane fade show active" id="general-pane" role="tabpanel"></div>
-                <div class="tab-pane fade" id="difficult-pane" role="tabpanel"></div>
-                <div class="tab-pane fade" id="favorite-pane" role="tabpanel"></div>
-                <div class="tab-pane fade" id="technical-pane" role="tabpanel"></div>
-            </div>
+            <ul class="nav nav-tabs category-tabs p-3" id="savedWordsTabs" role="tablist"><li class="nav-item" role="presentation"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#general-pane" type="button">General</button></li><li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#difficult-pane" type="button">Difficult</button></li><li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#favorite-pane" type="button">Favorite</button></li><li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#technical-pane" type="button">Technical</button></li></ul>
+            <div class="tab-content bg-light p-3" id="savedWordsTabsContent"><div class="tab-pane fade show active" id="general-pane" role="tabpanel"></div><div class="tab-pane fade" id="difficult-pane" role="tabpanel"></div><div class="tab-pane fade" id="favorite-pane" role="tabpanel"></div><div class="tab-pane fade" id="technical-pane" role="tabpanel"></div></div>
         </div>
     </div>
-    
-    <div class="toast-container position-fixed bottom-0 end-0 p-3">
-        <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header bg-danger text-white">
-                <i class="bi bi-exclamation-triangle-fill rounded me-2"></i>
-                <strong class="me-auto">Error</strong>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
-            </div>
-            <div class="toast-body" id="toastBody"></div>
-        </div>
-    </div>
-
+    <div class="toast-container position-fixed bottom-0 end-0 p-3"><div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true"><div class="toast-header"><strong class="me-auto" id="toastTitle"></strong><button type="button" class="btn-close" data-bs-dismiss="toast"></button></div><div class="toast-body" id="toastBody"></div></div></div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // --- CONFIGURATION ---
-        const googleScriptUrl = 'https://script.google.com/macros/s/AKfycbzDoTSJfYuhp-Dq_n9NvJiM--cGWl-S1sxGKnjRq6SdBIMLJrfusmPOSLFVlXZPAP2dOw/exec';
-
-        // --- DOM ELEMENTS ---
+        const googleScriptUrl = 'https://script.google.com/macros/s/AKfycby9bTsMNlvQNj1IjALgbctFyV7c5hdq4MlgJX3wKHPTgiCM9w-1i6TezNkASbon3u0pyA/exec'; // <-- PASTE YOUR URL HERE
         const refreshBtn = document.getElementById('refreshBtn');
         const savedWordsTabs = document.getElementById('savedWordsTabs');
         const savedWordsTabsContent = document.getElementById('savedWordsTabsContent');
         const toastEl = document.getElementById('liveToast');
         const toast = new bootstrap.Toast(toastEl);
 
-        // --- INITIAL LOAD & EVENTS ---
         loadSavedWords();
         refreshBtn.addEventListener('click', loadSavedWords);
 
-        // --- FUNCTIONS ---
+        savedWordsTabsContent.addEventListener('click', function(e) {
+            if (e.target.classList.contains('delete-btn')) {
+                const wordEl = e.target.closest('.word-item');
+                const word = wordEl.dataset.word;
+                const timestamp = wordEl.dataset.timestamp;
+                if (confirm(`Are you sure you want to delete "${word}"?`)) {
+                    deleteWord(timestamp, wordEl);
+                }
+            } else if (e.target.closest('.word-item-content')) {
+                const wordToSearch = e.target.closest('.word-item').dataset.word;
+                sessionStorage.setItem('searchWordOnLoad', wordToSearch);
+                window.location.href = 'index.html';
+            }
+        });
+
         function loadSavedWords() {
             setLoadingState(true);
-            
-            // This JSONP method is required by the provided GAS script's `doGet` function.
-            // It bypasses CORS by dynamically inserting a <script> tag.
             const script = document.createElement('script');
             const callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
-            
             window[callbackName] = function(data) {
                 document.body.removeChild(script);
                 delete window[callbackName];
                 processWords(data.error ? [] : data);
                 setLoadingState(false);
             };
-
             script.onerror = function() {
                 document.body.removeChild(script);
                 delete window[callbackName];
-                showError("Failed to load words. The script might be deployed incorrectly or there's a network issue.");
-                processWords([]); // Show empty state on error
+                showToast('Error', "Failed to load words. Check the script URL and deployment settings.");
+                processWords([]);
                 setLoadingState(false);
             };
-
             script.src = `${googleScriptUrl}?action=getWords&callback=${callbackName}`;
             document.body.appendChild(script);
         }
 
         function processWords(words) {
-            // Find all unique custom categories
-            const customCategories = [...new Set(words.map(w => w.category).filter(c => !['general', 'difficult', 'favorite', 'technical'].includes(c)))];
-            
-            // Create tabs for any new custom categories
-            customCategories.forEach(cat => {
-                if (!document.getElementById(`${cat}-tab`)) {
-                    createCategoryTabAndPane(cat);
-                }
-            });
-
-            // Get all categories to populate
+            const customCategories = [...new Set(words.map(w => w.category).filter(c => c && !['general', 'difficult', 'favorite', 'technical'].includes(c)))];
+            customCategories.forEach(cat => { if (!document.getElementById(`${cat}-tab`)) { createCategoryTabAndPane(cat); } });
             const allCategories = ['general', 'difficult', 'favorite', 'technical', ...customCategories];
-            
             allCategories.forEach(category => {
                 const wordsForCategory = words.filter(w => w.category === category);
                 populateWordList(category, wordsForCategory);
@@ -158,13 +96,11 @@
 
         function createCategoryTabAndPane(category) {
             const displayName = category.charAt(0).toUpperCase() + category.slice(1);
-            // Tab Button
             const li = document.createElement('li');
             li.className = 'nav-item';
             li.setAttribute('role', 'presentation');
             li.innerHTML = `<button class="nav-link" id="${category}-tab" data-bs-toggle="tab" data-bs-target="#${category}-pane" type="button">${displayName}</button>`;
             savedWordsTabs.appendChild(li);
-            // Tab Pane
             const pane = document.createElement('div');
             pane.className = 'tab-pane fade';
             pane.id = `${category}-pane`;
@@ -175,34 +111,30 @@
         function populateWordList(category, words) {
             const container = document.getElementById(`${category}-pane`);
             if (!container) return;
-
             if (words.length === 0) {
-                container.innerHTML = `<div class="text-center text-muted p-5"><i class="bi bi-journal-x fs-1"></i><p class="mt-2">No words saved in this category yet.</p></div>`;
+                container.innerHTML = `<div class="text-center text-muted p-5"><i class="bi bi-journal-x fs-1"></i><p class="mt-2">No words saved here yet.</p></div>`;
                 return;
             }
-            
             const list = document.createElement('div');
             list.className = 'word-list d-grid gap-3';
-            
-            // Sort words by timestamp, newest first
             words.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-
             words.forEach(word => {
                 const item = document.createElement('div');
-                item.className = 'word-item p-3';
-                item.onclick = () => {
-                    // Store word in session storage and redirect to search page
-                    sessionStorage.setItem('searchWord', word.word);
-                    window.location.href = 'index.html';
-                };
-                
+                item.className = 'word-item d-flex align-items-center p-3';
+                item.dataset.word = word.word;
+                item.dataset.timestamp = word.timestamp;
                 item.innerHTML = `
-                    <div class="d-flex justify-content-between align-items-start">
-                        <h5 class="mb-1 fw-bold">${word.word}</h5>
-                        <span class="badge bg-primary-subtle text-primary-emphasis category-badge">${word.category}</span>
+                    <div class="flex-grow-1 word-item-content" style="cursor: pointer;">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <h5 class="mb-1 fw-bold">${word.word}</h5>
+                            <span class="badge bg-primary-subtle text-primary-emphasis category-badge">${word.category || 'general'}</span>
+                        </div>
+                        <p class="mb-2 text-muted">${word.definition}</p>
+                        <small class="text-muted">Saved: ${new Date(word.timestamp).toLocaleDateString()}</small>
                     </div>
-                    <p class="mb-2 text-muted">${word.definition}</p>
-                    <small class="text-muted">Saved: ${new Date(word.timestamp).toLocaleDateString()}</small>
+                    <div class="ms-3 ps-2 text-center">
+                        <i class="bi bi-trash3-fill delete-btn" title="Delete word"></i>
+                    </div>
                 `;
                 list.appendChild(item);
             });
@@ -210,27 +142,65 @@
             container.appendChild(list);
         }
 
-        function setLoadingState(isLoading) {
-            refreshBtn.disabled = isLoading;
-            if (isLoading) {
-                refreshBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span> Loading...';
-            } else {
-                refreshBtn.innerHTML = '<i class="bi bi-arrow-clockwise me-1"></i> Refresh';
+        async function deleteWord(timestamp, elementToRemove) {
+            elementToRemove.style.opacity = '0.5';
+            try {
+                const response = await fetch(googleScriptUrl, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'delete', timestamp: timestamp })
+                });
+                const result = await response.json();
+                if (result.status === 'success') {
+                    showToast('Success', result.message);
+                    elementToRemove.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                    elementToRemove.style.opacity = '0';
+                    elementToRemove.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        elementToRemove.remove();
+                        const listContainer = elementToRemove.parentElement;
+                        if (listContainer && !listContainer.hasChildNodes()) {
+                            const category = listContainer.closest('.tab-pane').id.replace('-pane', '');
+                            populateWordList(category, []);
+                        }
+                    }, 300);
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (err) {
+                showToast('Error', 'Delete failed: ' + err.message);
+                elementToRemove.style.opacity = '1';
             }
         }
 
-        function showError(message) {
-            document.getElementById('toastBody').textContent = message;
-            toast.show();
+        function setLoadingState(isLoading) {
+            refreshBtn.disabled = isLoading;
+            refreshBtn.innerHTML = isLoading ? '<span class="spinner-border spinner-border-sm"></span> Loading...' : '<i class="bi bi-arrow-clockwise me-1"></i> Refresh';
         }
 
-        // Check if we were redirected here to search for a word
-        const wordToSearch = sessionStorage.getItem('searchWord');
+        function showToast(title, message) {
+            const toastHeader = toastEl.querySelector('.toast-header');
+            const toastTitle = document.getElementById('toastTitle');
+            const toastBody = document.getElementById('toastBody');
+            
+            toastTitle.textContent = title;
+            toastBody.textContent = message;
+            
+            if (title.toLowerCase() === 'error') {
+                toastHeader.classList.add('bg-danger', 'text-white');
+                toastHeader.classList.remove('bg-success');
+            } else {
+                toastHeader.classList.add('bg-success', 'text-white');
+                toastHeader.classList.remove('bg-danger');
+            }
+            toast.show();
+        }
+        
+        const wordToSearch = sessionStorage.getItem('searchWordOnLoad');
         if (wordToSearch) {
-            sessionStorage.removeItem('searchWord'); // Clear it after use
-            // This is on the saved page, but in a real app you might handle it differently.
-            // For now, the user can click search on the nav bar.
-            // We could redirect back, but this simple example assumes the user initiated the click from here.
+            sessionStorage.removeItem('searchWordOnLoad');
+            window.location.href = `index.html?search=${encodeURIComponent(wordToSearch)}`;
         }
     });
     </script>
